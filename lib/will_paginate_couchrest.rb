@@ -111,9 +111,9 @@ module CouchRest
           # Return a WillPaginate collection suitable for usage
           # 
           def paginated_view(view_name, options = {})
-          
-            raise "Missing page parameter" if options[:page].nil?
             raise "Missing per_page parameter" if options[:per_page].nil?
+
+            options[:page] ||= 1
 
             ::WillPaginate::Collection.create( options[:page], options[:per_page] ) do |pager|
               # perform view count first (should create designs if missing)
