@@ -10,10 +10,10 @@ module CouchRest
       end
 
       module ClassMethods
-        # Define a CouchDB paginate view. The name of the view will be the concatenation
+        # Define a CouchDB will paginate view. The name of the view will be the concatenation
         # of <tt>paginate_by</tt> and the keys joined by <tt>_and_</tt>
-        #  
-        # ==== Example views:
+        # 
+        # ==== Example paginated views:
         #  
         #   class Post
         #     # view with default options
@@ -64,7 +64,6 @@ module CouchRest
         #  
         # For further details on <tt>view_by</tt>'s other options, please see the
         # standard documentation.
-        
         def paginated_view_by(*keys)
 
           # Prepare the Traditional view
@@ -101,9 +100,18 @@ module CouchRest
               paginated_view('#{view_name}', options)
             end
           RUBY_EVAL
-
         end
 
+        ##
+        # Generate a Will Paginate collection from all the available
+        # documents stored with a matching couchrest-type.
+        #
+        # Requires no declaration as the 'all' view is built into couchrest
+        # Extended Documents.
+        #
+        def paginate_all(options = {})
+          paginated_view(:all, options)
+        end
 
         protected
 
@@ -117,14 +125,21 @@ module CouchRest
 
             ::WillPaginate::Collection.create( options[:page], options[:per_page] ) do |pager|
               # perform view count first (should create designs if missing)
-              total = view( view_name, options.update(:reduce => true) )['rows'].pop
-              pager.total_entries = total ? total['value'] : 0
-              results = paginate(
-                options.merge(
-                  :design_doc => self.to_s, :view_name => view_name,
-                  :include_docs => true, :reduce => false
-                )
+              if view_name.to_sym == :all
+                pager.total_entries = count()
+              else
+                total = view( view_name, options.update(:reduce => true) )['rows'].pop
+                pager.total_entries = total ? total['value'] : 0
+              end
+              p_options = options.merge(
+                :design_doc => self.to_s, :view_name => view_name,
+                  :include_docs => true
               )
+              # Only provide the reduce parameter when necessary. This is when the view has
+              # been set with a reduce method and requires the reduce boolean parameter
+              # to be either true or false on all requests.
+              p_options[:reduce] = false unless view_name.to_sym == :all
+              results = paginate(p_options)
               pager.replace( results )
             end
           end

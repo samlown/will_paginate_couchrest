@@ -52,6 +52,14 @@ describe CouchRest::Mixins::WillPaginate do
       docs.last.name.should eql('document 09')
     end
 
+    it "should perform paginate on all entries" do
+      docs = SomeDoc.paginate_all(:page => 1, :per_page => 5)
+      docs.first.class.should eql(SomeDoc)
+      docs.total_pages.should eql(4)
+      docs.total_entries.should eql(20)
+      docs.length.should eql(5)
+    end
+
 
   
 
