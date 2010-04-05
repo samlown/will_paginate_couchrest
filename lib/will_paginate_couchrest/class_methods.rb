@@ -110,36 +110,34 @@ module CouchRest
           paginated_view(:all, options)
         end
 
-        protected
+        ##
+        # Return a WillPaginate collection suitable for usage
+        # 
+        def paginated_view(view_name, options = {})
+          raise "Missing per_page parameter" if options[:per_page].nil?
 
-          ##
-          # Return a WillPaginate collection suitable for usage
-          # 
-          def paginated_view(view_name, options = {})
-            raise "Missing per_page parameter" if options[:per_page].nil?
+          options[:page] ||= 1
 
-            options[:page] ||= 1
-
-            ::WillPaginate::Collection.create( options[:page], options[:per_page] ) do |pager|
-              # perform view count first (should create designs if missing)
-              if view_name.to_sym == :all
-                pager.total_entries = count()
-              else
-                total = view( view_name, options.update(:reduce => true) )['rows'].pop
-                pager.total_entries = total ? total['value'] : 0
-              end
-              p_options = options.merge(
-                :design_doc => self.to_s, :view_name => view_name,
-                  :include_docs => true
-              )
-              # Only provide the reduce parameter when necessary. This is when the view has
-              # been set with a reduce method and requires the reduce boolean parameter
-              # to be either true or false on all requests.
-              p_options[:reduce] = false unless view_name.to_sym == :all
-              results = paginate(p_options)
-              pager.replace( results )
+          ::WillPaginate::Collection.create( options[:page], options[:per_page] ) do |pager|
+            # perform view count first (should create designs if missing)
+            if view_name.to_sym == :all
+              pager.total_entries = count({:database => options[:database]})
+            else
+              total = view( view_name, options.update(:reduce => true) )['rows'].pop
+              pager.total_entries = total ? total['value'] : 0
             end
+            p_options = options.merge(
+              :design_doc => self.to_s, :view_name => view_name,
+                :include_docs => true
+            )
+            # Only provide the reduce parameter when necessary. This is when the view has
+            # been set with a reduce method and requires the reduce boolean parameter
+            # to be either true or false on all requests.
+            p_options[:reduce] = false unless view_name.to_sym == :all
+            results = paginate(p_options)
+            pager.replace( results )
           end
+        end
       end
       
     end
