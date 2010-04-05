@@ -77,5 +77,17 @@ describe CouchRest::Mixins::WillPaginate do
     end
 
   end
+
+
+  describe "using pagination via proxy class" do
+    before(:all) do
+      @proxy = SomeDoc.on(SPEC_COUCH)
+    end
+
+    it "should allow paginate call on proxy" do
+      SomeDoc.should_receive(:paginate_by_name)
+      @proxy.paginate_by_name :key => 'foo'
+    end
+  end
 end
 

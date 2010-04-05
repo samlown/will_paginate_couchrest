@@ -8,6 +8,12 @@ http://www.opensourcery.co.za/2010/02/08/paginating-documents-with-couchrest-and
 
 Automatically generate views with an extra reduce method used to generate the total number of documents.
 
+== History
+
+2010-04-05 - 0.2.0 - Added support for CouchRest Proxy class
+
+2010-03-05 - 0.1.0 - Initial version
+
 == Install
 
   gem install will_paginate_couchrest
