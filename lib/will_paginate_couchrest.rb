@@ -4,19 +4,43 @@ require('will_paginate_couchrest/proxy_methods')
 
 # Take the liberty of adding ourself to the couchrest library
 
-module CouchRest
-  class ExtendedDocument < Document
-    include CouchRest::Mixins::WillPaginate
+if defined?(CouchRest::ExtendedDocument)
+  module CouchRest
+    class ExtendedDocument < Document
+      include CouchRest::WillPaginate
+    end
   end
-end
 
-module CouchRest
-  module Mixins
-    module ClassProxy
-      class Proxy
-        include CouchRest::Mixins::WillPaginate::ProxyMethods
+  module CouchRest
+    module Mixins
+      module ClassProxy
+        class Proxy
+          include CouchRest::WillPaginate::ProxyMethods
+        end
       end
     end
   end
 end
+
+if defined?(CouchRest::Model::Base)
+  module CouchRest
+    module Model
+      class Base < Document
+        include CouchRest::WillPaginate
+      end
+    end
+  end
+
+  module CouchRest
+    module Model
+      module ClassProxy
+        class Proxy
+          include CouchRest::WillPaginate::ProxyMethods
+        end
+      end
+    end
+  end
+end
+
+
 

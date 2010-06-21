@@ -10,6 +10,8 @@ Automatically generate views with an extra reduce method used to generate the to
 
 == History
 
+2010-06-21 - 0.3.0 - Added support for new CouchRest Model
+
 2010-04-05 - 0.2.0 - Added support for CouchRest Proxy class
 
 2010-03-05 - 0.1.0 - Initial version
