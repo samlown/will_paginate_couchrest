@@ -126,8 +126,9 @@ module CouchRest
             pager.total_entries = total ? total['value'] : 0
           end
           p_options = options.merge(
-            :design_doc => self.to_s, :view_name => view_name,
-              :include_docs => true
+            :design_doc => self.to_s,
+            :view_name => view_name,
+            :include_docs => true
           )
           # Only provide the reduce parameter when necessary. This is when the view has
           # been set with a reduce method and requires the reduce boolean parameter
