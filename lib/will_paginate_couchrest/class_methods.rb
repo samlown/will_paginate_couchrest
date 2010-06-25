@@ -122,7 +122,7 @@ module CouchRest
           if view_name.to_sym == :all
             pager.total_entries = count({:database => options[:database]})
           else
-            total = view( view_name, options.update(:reduce => true) )['rows'].pop
+            total = view( view_name, options.update(:reduce => true).dup )['rows'].pop
             pager.total_entries = total ? total['value'] : 0
           end
           p_options = options.merge(
